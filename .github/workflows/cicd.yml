@@ -1,0 +1,42 @@
+name: CI/CD
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: setup backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Run tests
+        working-directory: $GITHUB_WORKSPACE/api
+        run: mvn clean install
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+          
+      - name: install yarn
+        run: npm install -g yarn
+
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Frontend build
+        working-directory: $GITHUB_WORKSPACE/api
+        run: |
+          yarn install
+          yarn build
