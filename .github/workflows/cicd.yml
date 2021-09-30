@@ -18,7 +18,7 @@ jobs:
           java-version: '11'
 
       - name: Run tests
-        working-directory: $GITHUB_WORKSPACE/api
+        working-directory: ./api
         run: mvn clean install
 
   frontend:
@@ -36,7 +36,7 @@ jobs:
           node-version: '14'
 
       - name: Frontend build
-        working-directory: $GITHUB_WORKSPACE/api
+        working-directory: ./frontend
         run: |
           yarn install
           yarn build
