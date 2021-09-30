@@ -16,6 +16,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+          cache: 'maven'
 
       - name: Run tests
         working-directory: ./api
@@ -35,6 +36,7 @@ jobs:
         with:
           node-version: '14'
           cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Frontend build
         working-directory: ./frontend
