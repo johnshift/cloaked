@@ -7,157 +7,143 @@ on:
     
 jobs:
 
-  upload-artifact:
-    name: Upload Artifact
+  # upload-artifact:
+  #   name: Upload Artifact
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: zip
+  #       run: zip -r cloaked.zip .
+  #     - name: upload
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: cloaked-artifact
+  #         path: cloaked.zip
+  #         retention-days: 1
+
+  # download-artifact:
+  #   name: Download Artifact
+  #   needs: [upload-artifact]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: download the uploaded artifact
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: cloaked-artifact
+  #     - name: unzip
+  #       run: unzip cloaked.zip
+
+  api:
+    name: API
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
-      - name: before zip
-        run: ls -a
-      - name: zip
-        run: zip -r cloaked.zip .
-      - name: after zip
-        run: ls -a
+      - name: Setup Backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Run Unit + Integration Tests
+        working-directory: ./api
+        run: 'mvn clean install'
+      - name: zip api
+        run: zip -r api.zip api
       - name: upload
         uses: actions/upload-artifact@v2
         with:
-          name: cloaked-artifact
-          path: cloaked.zip
+          name: api-artifact
+          path: api.zip
           retention-days: 1
 
-  download-artifact:
-    name: Download Artifact
-    needs: [upload-artifact]
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Build
+        working-directory: ./frontend
+        run: yarn install && yarn format && yarn lint && yarn build
+      - name: Run Unit Tests
+        working-directory: ./frontend
+        run: yarn test:unit
+      - name: Run Integration Tests
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn start
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
+          browser: chrome
+          headless: true
+      - name: zip frontend
+        run: zip -r frontend.zip frontend
+      - name: upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-artifact
+          path: frontend.zip
+          retention-days: 1
+
+  api-frontend-integration:
+    name: Api + Frontend
+    needs: [api, frontend]
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: download the uploaded artifact
         uses: actions/download-artifact@v2
+      - name: unzip download artifacts
+        run: unzip '*.zip'
+      - name: list all files in directory
+        run: ls -la
+      - name: Run End-to-End Tests
+        uses: cypress-io/github-action@v2
         with:
-          name: cloaked-artifact
-      - name: before unzip
-        run: ls -a
-      - name: unzip
-        run: unzip cloaked.zip
-      - name: after unzip
-        run: ls -a
-  # checkout
-  # ls
-  # zip
-  # upload -> retention 1
-  # download
-  # unzip
-  # ls
+          start: yarn start
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
+          browser: chrome
+          headless: true
 
-  # api:
-  #   name: API
-  #   runs-on: ubuntu-latest
-  #   services:
-  #     postgres:
-  #       image: postgres:latest
-  #       env:
-  #         POSTGRES_DB: test   
-  #         POSTGRES_USER: dev1     
-  #         POSTGRES_PASSWORD: pass1
-  #       ports:
-  #         - 5432:5432
-  #       options: >-
-  #         --health-cmd pg_isready
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup Backend
-  #       uses: actions/setup-java@v2
-  #       with:
-  #         distribution: 'adopt'
-  #         java-version: '11'
-  #         cache: 'maven'
-  #     - name: Run Unit + Integration Tests
-  #       working-directory: ./api
-  #       run: 'mvn clean install'
-
-  # frontend:
-  #   name: Frontend
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup frontend
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '14'
-  #         cache: 'npm'
-  #         cache-dependency-path: frontend/yarn.lock
-  #     - name: Install Yarn
-  #       run: npm install -g yarn
-  #     - name: Build
-  #       working-directory: ./frontend
-  #       run: yarn install && yarn format && yarn lint && yarn build
-  #     - name: Run Unit Tests
-  #       working-directory: ./frontend
-  #       run: yarn test:unit
-  #     - name: Run Integration Tests
-  #       uses: cypress-io/github-action@v2
-  #       with:
-  #         start: yarn start
-  #         working-directory: ./frontend
-  #         wait-on: "http://localhost:5000"
-  #         wait-on-timeout: 30
-  #         browser: chrome
-  #         headless: true
-
-  # api-frontend-integration:
-  #   name: Api + Frontend
-  #   needs: [api, frontend]
-  #   runs-on: ubuntu-latest
-  #   services:
-  #     postgres:
-  #       image: postgres:latest
-  #       env:
-  #         POSTGRES_DB: test   
-  #         POSTGRES_USER: dev1     
-  #         POSTGRES_PASSWORD: pass1
-  #       ports:
-  #         - 5432:5432
-  #       options: >-
-  #         --health-cmd pg_isready
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v2
-  #       with:
-  #         distribution: 'adopt'
-  #         java-version: '11'
-  #         cache: 'maven'
-  #     - name: Build Api
-  #       working-directory: ./api
-  #       run: mvn clean install -DskipTests
-  #     - name: Setup Frontend
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '14'
-  #         cache: 'npm'
-  #         cache-dependency-path: frontend/yarn.lock
-  #     - name: Install Yarn
-  #       run: npm install -g yarn
-  #     - name: Compile Frontend
-  #       working-directory: ./frontend
-  #       run: yarn install && yarn build
-  #     - name: Run End-to-End Tests
-  #       uses: cypress-io/github-action@v2
-  #       with:
-  #         start: yarn start
-  #         working-directory: ./frontend
-  #         wait-on: "http://localhost:5000"
-  #         wait-on-timeout: 30
-  #         browser: chrome
-  #         headless: true
-
-  #     - name: 'todo: deploy vercel + heroku'
-  #       run: echo "..."
+      - name: 'todo: deploy vercel + heroku'
+        run: echo "..."
 
       
   
