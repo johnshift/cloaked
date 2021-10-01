@@ -17,9 +17,7 @@ function App() {
         </p>
 
         <div className="body">
-          <button onClick={() => setCount((count) => count + 1)}>
-            🪂 Click me : {count}
-          </button>
+          <button onClick={() => setCount(count + 1)}>🪂 Click me : {count}</button>
 
           <p> Don&apos;t forgot to install Eslint and Prettier in Your Vscode.</p>
 
@@ -31,8 +29,7 @@ function App() {
               className="App-link"
               href="https://reactjs.org"
               target="_blank"
-              rel="noopener noreferrer"
-            >
+              rel="noopener noreferrer">
               Learn React
             </a>
             {' | '}
@@ -40,8 +37,7 @@ function App() {
               className="App-link"
               href="https://vitejs.dev/guide/features.html"
               target="_blank"
-              rel="noopener noreferrer"
-            >
+              rel="noopener noreferrer">
               Vite Docs
             </a>
           </p>
