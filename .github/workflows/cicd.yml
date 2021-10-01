@@ -126,8 +126,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - name: download the uploaded artifact
+      - name: download api artifact
         uses: actions/download-artifact@v2
+        with:
+          name: api-artifact
+      - name: download api artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: api-artifact
       - name: unzip download artifacts
         run: unzip '*.zip'
       - name: list all files in directory
