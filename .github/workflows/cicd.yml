@@ -11,7 +11,7 @@ jobs:
 
   backend_dev:
     if: github.ref == 'refs/heads/dev'
-    name: DEV_Backend
+    name: Backend Dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
 
   frontend_dev:
     if: github.ref == 'refs/heads/dev'
-    name: DEV_Frontend
+    name: Frontend Dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -44,9 +44,28 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
 
-      - name: Frontend build
+      - name: build
         working-directory: ./frontend
         run: |
           yarn install
-          yarn lint
           yarn build
+      
+      - name: lint
+        working-directory: ./frontend
+        run: |
+          yarn format
+          yarn lint
+
+      - name: unit test
+        working-directory: ./frontend
+        run: yarn test:unit
+
+      - name: integration test
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn build && yarn serve
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          browser: chrome
+          headless: true
+
