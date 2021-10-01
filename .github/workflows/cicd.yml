@@ -66,14 +66,14 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: 'frontend'
-      - name: Install Yarn
-        run: npm install -g yarn
       - name: Setup frontend
         uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
+      - name: Install Yarn
+        run: npm install -g yarn
       - name: Build
         working-directory: ./frontend
         run: |
@@ -107,14 +107,17 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: 'frontend'
-      - name: Install Yarn
-        run: npm install -g yarn
       - name: Setup Frontend
         uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Build
+        working-directory: ./frontend
+        run: yarn install
       - name: Run Unit Tests
         working-directory: ./frontend
         run: yarn test:unit
@@ -141,14 +144,17 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: 'frontend'
-      - name: Install Yarn
-        run: npm install -g yarn
       - name: Setup Frontend
         uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Build
+        working-directory: ./frontend
+        run: yarn install
       - name: Run Integration Tests
         uses: cypress-io/github-action@v2
         with:
