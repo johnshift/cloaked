@@ -63,9 +63,10 @@ jobs:
       - name: integration test
         uses: cypress-io/github-action@v2
         with:
-          start: yarn build && yarn serve
+          start: yarn start
           working-directory: ./frontend
           wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
           browser: chrome
           headless: true
 
