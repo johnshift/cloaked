@@ -5,9 +5,9 @@ on:
   
 jobs:
   
-  frontend:
+  build_tests:
     if: github.ref == 'refs/heads/frontend'
-    name: Frontend Dev
+    name: Build + Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
