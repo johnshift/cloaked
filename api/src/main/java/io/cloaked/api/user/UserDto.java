@@ -1,6 +1,6 @@
 package io.cloaked.api.user;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -18,12 +18,13 @@ public class UserDto {
     return new UserDto(user.getId(), user.getUsername(), user.getPassword());
   }
 
-  public static List<UserDto> of(List<User> user) {
+  public static List<UserDto> of(List<User> users) {
+
+    List<UserDto> dtos = new ArrayList<>();
+    for (User user : users) {
+      dtos.add(UserDto.of(user));
+    }
     
-    return Arrays.asList(new UserDto(
-      user.get(0).getId(), 
-      user.get(0).getUsername(), 
-      user.get(0).getPassword()
-    ));
+    return dtos;
   }
 }
