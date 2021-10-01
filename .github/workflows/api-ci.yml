@@ -1,0 +1,38 @@
+on:
+  push:
+  workflow_dispatch:
+  
+jobs:
+  
+  backend_dev:
+    name: API Dev
+    if: github.ref == 'refs/heads/dev.api'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: setup backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: Run tests
+        working-directory: ./api
+        run: mvn clean install
