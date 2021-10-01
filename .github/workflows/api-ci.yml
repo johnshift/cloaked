@@ -5,9 +5,9 @@ on:
   
 jobs:
   
-  backend_dev:
+  api:
     name: API Dev
-    if: github.ref == 'refs/heads/dev.api'
+    if: github.ref == 'refs/heads/api'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: 'dev.api'
+          ref: 'api'
       
       - name: setup backend
         uses: actions/setup-java@v2
