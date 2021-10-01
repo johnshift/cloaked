@@ -1,0 +1,191 @@
+name: CI/CD 
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+    
+jobs:
+
+  api-build:
+    name: API Build
+    if: github.ref == 'refs/heads/api'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'api'
+      - name: setup backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Maven build
+        working-directory: ./api
+        run: mvn clean build
+
+  api-unit:
+    name: API Unit Test
+    needs: [api-build]
+    if: github.ref == 'refs/heads/api'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'api'
+      - name: setup backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Maven build
+        working-directory: ./api
+        run: mvn clean 
+        
+  api-integration:
+    name: API Integration Test
+    needs: [api-unit]
+    if: github.ref == 'refs/heads/api'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'api'
+      - name: setup backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Maven build
+        working-directory: ./api
+        run: 'mvn failsafe:integration-test'
+
+  frontend-build:
+    name: Frontend Build
+    if: github.ref == 'refs/heads/frontend'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'frontend'
+      - name: install yarn
+        run: npm install -g yarn
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
+      - name: build
+        working-directory: ./frontend
+        run: |
+          yarn install
+          yarn build
+      - name: lint
+        working-directory: ./frontend
+        run: |
+          yarn format
+          yarn lint
+  
+  frontend-unit:
+    name: Frontend Unit Tests
+    needs: [frontend-build]
+    if: github.ref == 'refs/heads/frontend'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'frontend'
+      - name: install yarn
+        run: npm install -g yarn
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
+      - name: unit test
+        working-directory: ./frontend
+        run: yarn test:unit
+
+  frontend-integration:
+    name: Frontend Integration Tests
+    needs: [frontend-unit]
+    if: github.ref == 'refs/heads/frontend'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'frontend'
+      - name: install yarn
+        run: npm install -g yarn
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
+      - name: integration test
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn start
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
+          browser: chrome
+          headless: true
+
+  api-frontend-integration:
+    name: Api + Frontend
+    needs: [api-integration, frontend-integration]
+    if: github.ref == 'refs/heads/dev.api'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: clone dev branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'dev'
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: build api
+        working-directory: ./api
+        run: mvn clean install -DskipTests
+      - name: install 
+        run: npm install -g yarn
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
+      - name: build frontend
+        working-directory: ./frontend
+        run: |
+          yarn install
+          yarn build
+
+      - name: 'todo: deploy vercel + heroku'
+        run: echo "..."
+
+      
+  
