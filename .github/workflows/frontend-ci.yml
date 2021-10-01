@@ -54,6 +54,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           branch: dev
-          commit-message: Auto Pull Request from Frontend
-          title: Some-Title
-          body: Body-Text
+          commit-message: MSG -> SDLDJSGLDJSGLDJSLGJDKLSG
+          title: TITLE -> sldfjlsdjflksdf
+          body: BODY ->
