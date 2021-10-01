@@ -42,4 +42,5 @@ jobs:
         working-directory: ./frontend
         run: |
           yarn install
+          yarn lint
           yarn build
