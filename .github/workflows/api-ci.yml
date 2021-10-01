@@ -46,6 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-tests]
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'api'
       - name: Pull remote first
         run: git pull origin dev
 
