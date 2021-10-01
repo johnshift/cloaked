@@ -141,7 +141,8 @@ jobs:
       - name: Run End-to-End Tests
         uses: cypress-io/github-action@v2
         with:
-          start: yarn start
+          # start: yarn start
+          start: yarn ci-integration:run
           working-directory: ./frontend
           wait-on: "http://localhost:5000"
           wait-on-timeout: 30
