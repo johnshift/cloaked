@@ -49,8 +49,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: 'api'
-      - name: Pull remote first
-        run: git pull origin dev
+
+      - name: Pull Dev Environment
+        run: git config pull.rebase false && git pull origin dev
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
