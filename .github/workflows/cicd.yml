@@ -130,10 +130,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: api-artifact
-      - name: download api artifact
+      - name: download frontend artifact
         uses: actions/download-artifact@v2
         with:
-          name: api-artifact
+          name: frontend-artifact
       - name: unzip download artifacts
         run: unzip '*.zip'
       - name: list all files in directory
