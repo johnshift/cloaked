@@ -1,29 +1,14 @@
 name: CI/CD 
 on:
   push:
+    branches: [dev]
   workflow_dispatch:
   pull_request:
     
 jobs:
 
-  api-build:
-    name: API Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Backend
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
-      - name: Maven Compile
-        working-directory: ./api
-        run: mvn clean compile
-
-  api-unit:
-    name: API Unit Test
-    needs: [api-build]
+  api:
+    name: API
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -47,42 +32,12 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
           cache: 'maven'
-      - name: Run Unit Tests
+      - name: Run Unit + Integration Tests
         working-directory: ./api
-        run: mvn clean test
-        
-  api-integration:
-    name: API Integration Test
-    needs: [api-unit]
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test   
-          POSTGRES_USER: dev1     
-          POSTGRES_PASSWORD: pass1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Backend
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
-      - name: Run Integration Tests
-        working-directory: ./api
-        run: 'mvn failsafe:integration-test'
+        run: 'mvn clean install'
 
-  frontend-build:
-    name: Frontend Build
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -96,53 +51,10 @@ jobs:
         run: npm install -g yarn
       - name: Build
         working-directory: ./frontend
-        run: |
-          yarn install
-          yarn build
-      - name: Lint
-        working-directory: ./frontend
-        run: |
-          yarn format
-          yarn lint
-  
-  frontend-unit:
-    name: Frontend Unit Tests
-    needs: [frontend-build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Frontend
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: frontend/yarn.lock
-      - name: Install Yarn
-        run: npm install -g yarn
-      - name: Build
-        working-directory: ./frontend
-        run: yarn install
+        run: yarn format && yarn lint && yarn install && yarn build
       - name: Run Unit Tests
         working-directory: ./frontend
         run: yarn test:unit
-
-  frontend-integration:
-    name: Frontend Integration Tests
-    needs: [frontend-unit]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Frontend
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: frontend/yarn.lock
-      - name: Install Yarn
-        run: npm install -g yarn
-      - name: Build
-        working-directory: ./frontend
-        run: yarn install
       - name: Run Integration Tests
         uses: cypress-io/github-action@v2
         with:
@@ -155,7 +67,7 @@ jobs:
 
   api-frontend-integration:
     name: Api + Frontend
-    needs: [api-integration, frontend-integration]
+    needs: [api, frontend]
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -182,19 +94,26 @@ jobs:
       - name: Build Api
         working-directory: ./api
         run: mvn clean install -DskipTests
-      - name: Install Yarn
-        run: npm install -g yarn
       - name: Setup Frontend
         uses: actions/setup-node@v2
         with:
           node-version: '14'
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
+      - name: Install Yarn
+        run: npm install -g yarn
       - name: Compile Frontend
         working-directory: ./frontend
-        run: |
-          yarn install
-          yarn build
+        run: yarn install && yarn build
+      - name: Run End-to-End Tests
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn start
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
+          browser: chrome
+          headless: true
 
       - name: 'todo: deploy vercel + heroku'
         run: echo "..."
