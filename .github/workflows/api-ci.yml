@@ -5,8 +5,8 @@ on:
   
 jobs:
   
-  api:
-    name: API Dev
+  build_tests:
+    name: Build + Tests
     if: github.ref == 'refs/heads/api'
     runs-on: ubuntu-latest
     services:
