@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'api'
       - name: Setup Backend
         uses: actions/setup-java@v2
         with:
@@ -29,8 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'api'
       - name: Setup Backend
         uses: actions/setup-java@v2
         with:
@@ -47,8 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'api'
       - name: Setup Backend
         uses: actions/setup-java@v2
         with:
@@ -64,8 +58,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'frontend'
       - name: Setup frontend
         uses: actions/setup-node@v2
         with:
@@ -105,8 +97,6 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'frontend'
       - name: Setup Frontend
         uses: actions/setup-node@v2
         with:
@@ -142,8 +132,6 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'frontend'
       - name: Setup Frontend
         uses: actions/setup-node@v2
         with:
@@ -185,8 +173,6 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: 'dev'
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
