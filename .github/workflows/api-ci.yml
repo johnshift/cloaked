@@ -40,19 +40,6 @@ jobs:
         working-directory: ./api
         run: mvn clean install
           
-  create-pull-request:
-    name: Create Pull Request
-    if: github.ref == 'refs/heads/api'
-    runs-on: ubuntu-latest
-    needs: [build-tests]
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: 'api'
-
-      - name: Pull Dev Environment
-        run: git config pull.rebase false && git pull origin dev
-
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
