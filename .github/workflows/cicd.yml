@@ -1,5 +1,6 @@
-# run ci/cd on push at dev -> merge to master if passed
-# todo: run ci/cd (with prod env) on push at master
+# on push "dev": build, unit, integration, local e2e tests -> PASSED -> merge to "staging"
+# on push "staging": design, performance, live e2e tests -> PASSED -> wait for approval
+# on "approved": merge "staging" to "master" -> deploy 
 
 name: CI/CD
 on:
