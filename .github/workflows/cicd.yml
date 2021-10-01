@@ -126,6 +126,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: Setup Backend
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+      - name: Setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
       - name: download api artifact
         uses: actions/download-artifact@v2
         with:
