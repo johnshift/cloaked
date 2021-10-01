@@ -11,6 +11,7 @@
     "serve": "vite preview",
     "test:unit": "jest",
     "test:watch": "jest --watch",
+    "start": "yarn build && yarn serve",
     "test:integration": "cypress run",
     "test:open": "cypress open",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" && git update-index --again",
