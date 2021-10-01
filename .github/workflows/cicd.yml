@@ -25,6 +25,20 @@ jobs:
     name: API Unit Test
     needs: [api-build]
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Setup Backend
@@ -41,6 +55,20 @@ jobs:
     name: API Integration Test
     needs: [api-unit]
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Setup Backend
@@ -81,20 +109,6 @@ jobs:
     name: Frontend Unit Tests
     needs: [frontend-build]
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test   
-          POSTGRES_USER: dev1     
-          POSTGRES_PASSWORD: pass1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Setup Frontend
@@ -116,20 +130,6 @@ jobs:
     name: Frontend Integration Tests
     needs: [frontend-unit]
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test   
-          POSTGRES_USER: dev1     
-          POSTGRES_PASSWORD: pass1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Setup Frontend
