@@ -13,6 +13,21 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     name: Backend Dev
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test   
+          POSTGRES_USER: dev1     
+          POSTGRES_PASSWORD: pass1
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       
