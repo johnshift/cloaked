@@ -89,6 +89,14 @@ jobs:
       - name: Run Unit Tests
         working-directory: ./frontend
         run: yarn test:unit
+      - name: zip frontend
+        run: zip -r frontend.zip frontend
+      - name: upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-artifact
+          path: frontend.zip
+          retention-days: 1
       - name: Run Integration Tests
         uses: cypress-io/github-action@v2
         with:
@@ -98,14 +106,6 @@ jobs:
           wait-on-timeout: 30
           browser: chrome
           headless: true
-      - name: zip frontend
-        run: zip -r frontend.zip frontend
-      - name: upload
-        uses: actions/upload-artifact@v2
-        with:
-          name: frontend-artifact
-          path: frontend.zip
-          retention-days: 1
 
   api-frontend-integration:
     name: Api + Frontend
