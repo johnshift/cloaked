@@ -1,3 +1,6 @@
+# run ci/cd on push at dev -> merge to master if passed
+# todo: run ci/cd (with prod env) on push at master
+
 name: CI/CD
 on:
   push:
@@ -5,8 +8,9 @@ on:
 
 jobs:
 
-  backend:
-    name: Backend
+  backend_dev:
+    if: github.ref == 'refs/heads/dev'
+    name: DEV_Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,8 +26,9 @@ jobs:
         working-directory: ./api
         run: mvn clean install
 
-  frontend:
-    name: Frontend
+  frontend_dev:
+    if: github.ref == 'refs/heads/dev'
+    name: DEV_Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
