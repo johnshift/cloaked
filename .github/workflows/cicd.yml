@@ -126,6 +126,16 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: download api artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: api-artifact
+      - name: download frontend artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-artifact
+      - name: unzip download artifacts
+        run: unzip '*.zip'
       - name: Setup Backend
         uses: actions/setup-java@v2
         with:
@@ -138,16 +148,6 @@ jobs:
           node-version: '14'
           cache: 'npm'
           cache-dependency-path: frontend/yarn.lock
-      - name: download api artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: api-artifact
-      - name: download frontend artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: frontend-artifact
-      - name: unzip download artifacts
-        run: unzip '*.zip'
       - name: list all files in directory
         run: ls -la
       - name: Run End-to-End Tests
