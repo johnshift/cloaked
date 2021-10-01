@@ -14,46 +14,43 @@ jobs:
         with:
           ref: 'dev.frontend'
           
-      # - name: install yarn
-      #   run: npm install -g yarn
+      - name: install yarn
+        run: npm install -g yarn
 
-      # - name: setup frontend
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '14'
-      #     cache: 'npm'
-      #     cache-dependency-path: frontend/yarn.lock
+      - name: setup frontend
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: frontend/yarn.lock
 
-      # - name: build
-      #   working-directory: ./frontend
-      #   run: |
-      #     yarn install
-      #     yarn build
+      - name: build
+        working-directory: ./frontend
+        run: |
+          yarn install
+          yarn build
       
-      # - name: lint
-      #   working-directory: ./frontend
-      #   run: |
-      #     yarn format
-      #     yarn lint
+      - name: lint
+        working-directory: ./frontend
+        run: |
+          yarn format
+          yarn lint
 
-      # - name: unit test
-      #   working-directory: ./frontend
-      #   run: yarn test:unit
+      - name: unit test
+        working-directory: ./frontend
+        run: yarn test:unit
 
-      # - name: integration test
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     start: yarn start
-      #     working-directory: ./frontend
-      #     wait-on: "http://localhost:5000"
-      #     wait-on-timeout: 30
-      #     browser: chrome
-      #     headless: 
+      - name: integration test
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn start
+          working-directory: ./frontend
+          wait-on: "http://localhost:5000"
+          wait-on-timeout: 30
+          browser: chrome
+          headless: true
           
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           branch: dev
-          commit-message: MSG -> SDLDJSGLDJSGLDJSLGJDKLSG
-          title: TITLE -> sldfjlsdjflksdf
-          body: BODY ->
