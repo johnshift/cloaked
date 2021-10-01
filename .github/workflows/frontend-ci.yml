@@ -5,14 +5,14 @@ on:
   
 jobs:
   
-  frontend_dev:
-    if: github.ref == 'refs/heads/dev.frontend'
+  frontend:
+    if: github.ref == 'refs/heads/frontend'
     name: Frontend Dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: 'dev.frontend'
+          ref: 'frontend'
           
       - name: install yarn
         run: npm install -g yarn
