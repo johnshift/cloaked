@@ -10,6 +10,10 @@ jobs:
   api:
     name: API
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        java-version: ['11']
     services:
       postgres:
         image: postgres:latest
@@ -30,14 +34,14 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: ${{ matrix.java-version }}
           cache: 'maven'
       - name: Run Unit + Integration Tests
         working-directory: ./api
         run: 'mvn clean install'
-      - name: Cancel workflow on failure
-        if: failure()
-        uses: andymckay/cancel-action@0.2
+      # - name: Cancel workflow on failure
+      #   if: failure()
+      #   uses: andymckay/cancel-action@0.2
 
   frontend:
     name: Frontend
