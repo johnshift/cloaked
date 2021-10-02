@@ -7,126 +7,133 @@ on:
     
 jobs:
 
-  api:
-    name: API
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        java-version: ['11']
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test   
-          POSTGRES_USER: dev1     
-          POSTGRES_PASSWORD: pass1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Backend
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: ${{ matrix.java-version }}
-          cache: 'maven'
-      - name: Run Unit + Integration Tests
-        working-directory: ./api
-        run: 'mvn clean install'
-      # - name: Cancel workflow on failure
-      #   if: failure()
-      #   uses: andymckay/cancel-action@0.2
-
-  frontend:
-    name: Frontend
+  test-postgres-preinstalled:
+    name: Test Postgres Preinstalled
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup frontend
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: frontend/yarn.lock
-      - name: Install Yarn
-        run: npm install -g yarn
-      - name: Build
-        working-directory: ./frontend
-        run: yarn install && yarn format && yarn lint && yarn build
-      - name: Run Unit Tests
-        working-directory: ./frontend
-        run: yarn test:unit
-      - name: Run Integration Tests
-        uses: cypress-io/github-action@v2
-        with:
-          start: yarn start
-          working-directory: ./frontend
-          wait-on: "http://localhost:5000"
-          wait-on-timeout: 30
-          browser: chrome
-          headless: true
-      - name: Cancel workflow on failure
-        if: failure()
-        uses: andymckay/cancel-action@0.2
+      - name: Run sytemctl
+        run: sudo systemctl enable postgresql
 
-  api-frontend-integration:
-    name: Api + Frontend
-    needs: [api, frontend]
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: test   
-          POSTGRES_USER: dev1     
-          POSTGRES_PASSWORD: pass1
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
-      - name: Build Api
-        working-directory: ./api
-        run: mvn clean install -DskipTests
-      - name: Setup Frontend
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: frontend/yarn.lock
-      - name: Install Yarn
-        run: npm install -g yarn
-      - name: Compile Frontend
-        working-directory: ./frontend
-        run: yarn install && yarn build
-      - name: Run End-to-End Tests
-        uses: cypress-io/github-action@v2
-        with:
-          start: yarn start
-          working-directory: ./frontend
-          wait-on: "http://localhost:5000"
-          wait-on-timeout: 30
-          browser: chrome
-          headless: true
+  # api:
+  #   name: API
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       java-version: ['11']
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_DB: test   
+  #         POSTGRES_USER: dev1     
+  #         POSTGRES_PASSWORD: pass1
+  #       ports:
+  #         - 5432:5432
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Backend
+  #       uses: actions/setup-java@v2
+  #       with:
+  #         distribution: 'adopt'
+  #         java-version: ${{ matrix.java-version }}
+  #         cache: 'maven'
+  #     - name: Run Unit + Integration Tests
+  #       working-directory: ./api
+  #       run: 'mvn clean install'
+  #     # - name: Cancel workflow on failure
+  #     #   if: failure()
+  #     #   uses: andymckay/cancel-action@0.2
 
-      - name: 'todo: deploy vercel + heroku'
-        run: echo "..."
+  # frontend:
+  #   name: Frontend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup frontend
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #         cache: 'npm'
+  #         cache-dependency-path: frontend/yarn.lock
+  #     - name: Install Yarn
+  #       run: npm install -g yarn
+  #     - name: Build
+  #       working-directory: ./frontend
+  #       run: yarn install && yarn format && yarn lint && yarn build
+  #     - name: Run Unit Tests
+  #       working-directory: ./frontend
+  #       run: yarn test:unit
+  #     - name: Run Integration Tests
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         start: yarn start
+  #         working-directory: ./frontend
+  #         wait-on: "http://localhost:5000"
+  #         wait-on-timeout: 30
+  #         browser: chrome
+  #         headless: true
+  #     - name: Cancel workflow on failure
+  #       if: failure()
+  #       uses: andymckay/cancel-action@0.2
+
+  # api-frontend-integration:
+  #   name: Api + Frontend
+  #   needs: [api, frontend]
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_DB: test   
+  #         POSTGRES_USER: dev1     
+  #         POSTGRES_PASSWORD: pass1
+  #       ports:
+  #         - 5432:5432
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v2
+  #       with:
+  #         distribution: 'adopt'
+  #         java-version: '11'
+  #         cache: 'maven'
+  #     - name: Build Api
+  #       working-directory: ./api
+  #       run: mvn clean install -DskipTests
+  #     - name: Setup Frontend
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #         cache: 'npm'
+  #         cache-dependency-path: frontend/yarn.lock
+  #     - name: Install Yarn
+  #       run: npm install -g yarn
+  #     - name: Compile Frontend
+  #       working-directory: ./frontend
+  #       run: yarn install && yarn build
+  #     - name: Run End-to-End Tests
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         start: yarn start
+  #         working-directory: ./frontend
+  #         wait-on: "http://localhost:5000"
+  #         wait-on-timeout: 30
+  #         browser: chrome
+  #         headless: true
+
+  #     - name: 'todo: deploy vercel + heroku'
+  #       run: echo "..."
 
       
   # upload-artifact:
