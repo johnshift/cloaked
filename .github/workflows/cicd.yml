@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Run sytemctl
         run: sudo systemctl enable postgresql
+      - name: Check postgres status
+        run: service postgresql status
 
   # api:
   #   name: API
