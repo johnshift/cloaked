@@ -1,5 +1,6 @@
 package io.cloaked.api.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,6 +36,11 @@ public class UserControllerTest {
 
   User user = Generate.user();
   List<User> users = Generate.users();
+
+  @Test
+  public void sure_fail() {
+    assertEquals(2, 3);
+  }
 
   @Test
   public void get_users_OK() throws Exception {
