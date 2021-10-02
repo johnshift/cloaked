@@ -10,11 +10,21 @@ jobs:
   test-postgres-preinstalled:
     name: Test Postgres Preinstalled
     runs-on: ubuntu-latest
+    env:
+      DB_NAME: test
+      DB_USER: dev1
+      DB_PASS: pass1
     steps:
-      - name: Run postgres service
-        run: sudo service postgresql start
-      - name: Check postgres status
-        run: service postgresql status
+      - name: Setup Postgresql
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
+          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+      - name: List databases
+        run: sudo -u postgres psql -c "\l"
+      - name: List Users
+        run: sudo -u postgres psql -c "\du"
 
   # api:
   #   name: API
