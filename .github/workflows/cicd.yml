@@ -11,8 +11,8 @@ jobs:
     name: Test Postgres Preinstalled
     runs-on: ubuntu-latest
     steps:
-      - name: Run sytemctl
-        run: sudo systemctl enable postgresql
+      - name: Run postgres service
+        run: sudo service postgresql start
       - name: Check postgres status
         run: service postgresql status
 
