@@ -35,6 +35,9 @@ jobs:
       - name: Run Unit + Integration Tests
         working-directory: ./api
         run: 'mvn clean install'
+      - name: Cancel workflow on failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
 
   frontend:
     name: Frontend
@@ -64,6 +67,9 @@ jobs:
           wait-on-timeout: 30
           browser: chrome
           headless: true
+      - name: Cancel workflow on failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
 
   api-frontend-integration:
     name: Api + Frontend
