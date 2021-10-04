@@ -27,6 +27,10 @@ jobs:
     steps:
       - name: TRIGGERED REF
         run: echo ref = ${{ github.ref }}
+      - name: BASE REF
+        run: echo base ref = ${{ github.base_ref }}
+      - name: HEAD REF
+        run: echo base ref = ${{ github.head_ref }}
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.3"
         env:
