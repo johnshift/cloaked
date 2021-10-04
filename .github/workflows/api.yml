@@ -48,7 +48,7 @@ jobs:
 
       - name: Reset dev branch
         run: |
-          git fetch origin api
+          git fetch origin api:api
           git reset --hard api --
 
       - name: Create Pull Request
