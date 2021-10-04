@@ -1,0 +1,50 @@
+name: API
+on:
+  push:
+    branches: [api]
+
+jobs:
+
+  test-pull-request:
+    name: Test Pull Request to dev
+    runs-on: ubuntu-latest
+    env:
+      DB_NAME: test
+      DB_USER: dev1
+      DB_PASS: pass1
+    steps:
+      - name: Checkout API Branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'api'
+
+      - name: Setup PostgreSQL
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
+          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: Run Unit + Integration Tests
+        working-directory: ./api
+        run: 'mvn clean install'
+
+      - name: Create Pull Request to dev
+        uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "dev"
+          pr_title: "Pulling ${{ github.ref }} to branch 'dev'"
+          pr_body: "👑 *An automated PR*"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Cancel workflow on failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
