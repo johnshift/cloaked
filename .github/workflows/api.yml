@@ -46,11 +46,15 @@ jobs:
         with:
           ref: 'dev'
 
-      - name: Git pull
-        run: git pull --rebase origin api
+      - name: Reset dev branch
+        run: |
+          git fetch origin api
+          git reset --hard api --
 
-      - name: Git push
-        run: git push origin dev
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: i-dont-know-wtf
 
 # name: API
 # on:
