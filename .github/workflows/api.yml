@@ -6,7 +6,7 @@ on:
 jobs:
 
   api:
-    name: API Build + Tests
+    name: API Build + Tests 
     runs-on: ubuntu-latest
     env:
       DB_NAME: test
@@ -43,3 +43,4 @@ jobs:
           pr_title: "Pulling ${{ github.ref }} to branch 'dev'"
           pr_body: "👑 *An automated PR*"
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_label: "automerge"
