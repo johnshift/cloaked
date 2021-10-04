@@ -36,26 +36,33 @@ jobs:
       #   working-directory: ./api
       #   run: 'mvn clean install'
 
-      # - name: Create Pull Request to dev
-      #   uses: repo-sync/pull-request@v2
-      #   with:
-      #     destination_branch: "dev"
-      #     pr_title: "PR: ${{ github.ref }} -> 'dev'"
-      #     pr_body: "👑 *An automated PR*"
-      #     pr_label: "automerge"
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: FUCKING PULL REQUEST TO DEV
-        id: fucking-pr
-        uses: peter-evans/create-pull-request@v3
+      - name: Create Pull Request to dev
+        id: create-pr
+        uses: repo-sync/pull-request@v2
         with:
-          base: dev
-          branch: api
-          labels: automerge
+          destination_branch: "dev"
+          pr_title: "PR: ${{ github.ref }} -> 'dev'"
+          pr_body: "👑 *An automated PR*"
+          pr_label: "automerge"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check outputs
-        run: |
-          echo "Pull Request Number - ${{ steps.fucking-pr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.fucking-pr.outputs.pull-request-url }}"
-          echo "Pull Request Operation - ${{ steps.fucking-pr.outputs.pull-request-operation }}"
+      # - name: FUCKING PULL REQUEST TO DEV
+      #   id: fucking-pr
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     base: dev
+      #     branch: api
+      #     labels: automerge
+
+      # - name: Check outputs
+      #   run: |
+      #     echo "Pull Request Number - ${{ steps.fucking-pr.outputs.pull-request-number }}"
+      #     echo "Pull Request URL - ${{ steps.fucking-pr.outputs.pull-request-url }}"
+      #     echo "Pull Request Operation - ${{ steps.fucking-pr.outputs.pull-request-operation }}"
+
+      - name: Enable Pull Request Automerge
+        uses: peter-evans/enable-pull-request-automerge@v1
+        with:
+          token: ${{ secrets.PAT }}
+          pull-request-number: ${{steps.fucking-pr.outputs.pr_number}}
           
