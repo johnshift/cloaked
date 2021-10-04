@@ -18,9 +18,17 @@ on:
     types:
       - completed
   status: {}
+concurrency:
+  group: dev
+  cancel-in-progress: true
 jobs:
   automerge:
     runs-on: ubuntu-latest
+    env:
+      MERGE_LABELS: "automerge"
+      MERGE_COMMIT_MESSAGE: pull-request-title
+      # try every 5 sec (default) for 5 mins
+      MERGE_RETRIES: 60
     steps:
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.3"
