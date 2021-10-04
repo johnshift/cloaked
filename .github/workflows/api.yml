@@ -69,6 +69,7 @@ jobs:
 
   merge-api:
     name: Merge api -> dev
+    needs: [unit-test, integration-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
