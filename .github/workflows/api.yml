@@ -55,8 +55,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           branch: i-dont-know-wtf
-          token: ${{ secrets.PAT }}
-
 
 # name: API
 # on:
