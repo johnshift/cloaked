@@ -29,11 +29,6 @@ public class UserServiceTest {
   private final List<User> users = Generate.users();
 
   @Test
-  public void fail_fast() {
-    assertEquals(1, 2);
-  }
-
-  @Test
   public void getUsers_OK() {
 
     when(userRepo.findAll()).thenReturn(users);
