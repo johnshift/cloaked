@@ -63,6 +63,6 @@ jobs:
       - name: Enable Pull Request Automerge
         uses: peter-evans/enable-pull-request-automerge@v1
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.github-actions }}
           pull-request-number: ${{steps.fucking-pr.outputs.pr_number}}
           
