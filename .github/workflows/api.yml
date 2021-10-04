@@ -42,5 +42,5 @@ jobs:
           destination_branch: "dev"
           pr_title: "Pulling ${{ github.ref }} to branch 'dev'"
           pr_body: "👑 *An automated PR*"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_label: "automerge"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
