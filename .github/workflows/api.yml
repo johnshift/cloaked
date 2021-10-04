@@ -79,4 +79,4 @@ jobs:
           type: now
           from_branch: api
           target_branch: dev
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.PAT }}
