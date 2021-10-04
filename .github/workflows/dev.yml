@@ -1,8 +1,7 @@
 name: automerge
 on:
   pull_request:
-    branches: [dev]
-    types: [opened, labeled, edited, reopened, ready_for_review]
+    branches: [dev, api]
 concurrency:
   group: dev
   cancel-in-progress: true
