@@ -3,9 +3,6 @@ on:
   pull_request:
     branches: [dev]
     types: [opened, labeled, edited, reopened, ready_for_review]
-  check_suite:
-    types:
-      - completed
 concurrency:
   group: dev
   cancel-in-progress: true
