@@ -5,8 +5,8 @@ on:
 
 jobs:
 
-  test-pull-request:
-    name: Test Pull Request to dev
+  api:
+    name: API Build + Tests
     runs-on: ubuntu-latest
     env:
       DB_NAME: test
