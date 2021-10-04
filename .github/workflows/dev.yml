@@ -4,20 +4,9 @@ on:
     branches: [dev]
     types:
       - labeled
-      - unlabeled
-      - synchronize
-      - opened
-      - edited
-      - ready_for_review
-      - reopened
-      - unlocked
-  pull_request_review:
-    types:
-      - submitted
   check_suite:
     types:
       - completed
-  status: {}
 concurrency:
   group: dev
   cancel-in-progress: true
@@ -37,4 +26,4 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           # MERGE_COMMIT_MESSAGE: pull-request-title
           # try every 5 sec (default) for 5 mins
-          MERGE_RETRIES: 60
+          # MERGE_RETRIES: 60

@@ -40,7 +40,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           destination_branch: "dev"
-          pr_title: "Pulling ${{ github.ref }} to branch 'dev'"
+          pr_title: "PR: ${{ github.ref }} -> 'dev'"
           pr_body: "👑 *An automated PR*"
           pr_label: "automerge"
           github_token: ${{ secrets.GITHUB_TOKEN }}
