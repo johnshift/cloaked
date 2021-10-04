@@ -51,10 +51,7 @@ jobs:
 
       - name: Cancel workflow on failure
         if: failure()
-        uses: actions/github-script@v3
-        with:
-          script: |
-              core.setFailed('Fail workflow on failure')
+        run: exit 1
 
   frontend:
     name: Frontend
