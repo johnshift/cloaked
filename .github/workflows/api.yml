@@ -54,7 +54,7 @@ jobs:
       - name: Reset Dev -> API
         run: |
           git fetch origin api
-          git reset --hard api
+          git reset --hard origin/api
 
       - name: FUCKING PULL REQUEST TO DEV
         id: fucking-pr
