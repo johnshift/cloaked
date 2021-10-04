@@ -44,7 +44,10 @@ jobs:
           pr_title: "PR: ${{ github.ref }} -> 'dev'"
           pr_body: "👑 *An automated PR*"
           pr_label: "automerge"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
+
+      - name: Echo pull request number
+        run: echo pr_number = ${{steps.create-pr.outputs.pr_number}}
 
 
       # - name: FUCKING PULL REQUEST TO DEV
@@ -65,7 +68,7 @@ jobs:
         uses: peter-evans/enable-pull-request-automerge@v1
         with:
           token: ${{ secrets.PAT }}
-          pull-request-number: ${{steps.create-pr.outputs.pr_number}}
+          pull-request-number: ${{ steps.create-pr.outputs.pr_number }}
           
 
 
