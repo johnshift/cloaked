@@ -60,7 +60,7 @@ jobs:
         id: fucking-pr
         uses: peter-evans/create-pull-request@v3
         with:
-          branch: dsota-ambot
+          branch: dev
           labels: automerge
 
       - name: Check outputs
