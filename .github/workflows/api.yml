@@ -45,12 +45,22 @@ jobs:
       #     pr_label: "automerge"
       #     github_token: ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: Checkout DEV Branch before PR
+        uses: actions/checkout@v2
+        with:
+          ref: 'dev'
+        
+      - name: Reset Dev -> API
+        run: |
+          git fetch origin api:api
+          git reset --hard api
+
       - name: FUCKING PULL REQUEST TO DEV
         id: fucking-pr
         uses: peter-evans/create-pull-request@v3
         with:
-          branch: api
-          base: dev
+          branch: dsota-ambot
           labels: automerge
 
       - name: Check outputs
