@@ -49,8 +49,8 @@ jobs:
         id: fucking-pr
         uses: peter-evans/create-pull-request@v3
         with:
-          base: origin/dev
-          branch: origin/api
+          base: dev
+          branch: api
           labels: automerge
 
       - name: Check outputs
