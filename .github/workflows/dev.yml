@@ -21,13 +21,13 @@ on:
 concurrency:
   group: dev
   cancel-in-progress: true
+env:
+  MERGE_COMMIT_MESSAGE: pull-request-title
+  # try every 5 sec (default) for 5 mins
+  MERGE_RETRIES: 60
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    env:
-      MERGE_COMMIT_MESSAGE: pull-request-title
-      # try every 5 sec (default) for 5 mins
-      MERGE_RETRIES: 60
     steps:
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.3"
