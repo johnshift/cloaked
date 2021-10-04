@@ -25,6 +25,8 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
+      - name: TRIGGERED REF
+        run: echo ref = ${{ github.ref }}
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.3"
         env:
