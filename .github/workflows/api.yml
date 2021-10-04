@@ -44,7 +44,7 @@ jobs:
           pr_title: "PR: ${{ github.ref }} -> 'dev'"
           pr_body: "👑 *An automated PR*"
           pr_label: "automerge"
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Echo pull request number
         run: echo pr_number = ${{steps.create-pr.outputs.pr_number}}
