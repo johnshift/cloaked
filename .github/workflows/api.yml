@@ -5,8 +5,8 @@ on:
 
 jobs:
 
-  unit-test:
-    name: API Unit Tests 
+  api:
+    name: API Build + Tests 
     runs-on: ubuntu-latest
     env:
       DB_NAME: test
@@ -17,66 +17,136 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: 'api'
+
       - name: Setup PostgreSQL
         run: |
           sudo service postgresql start
           sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
           sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
           cache: 'maven'
-      - name: Run Unit Test
-        working-directory: ./api
-        run: 'mvn clean install'
-      - name: Cancel workflow on failure
-        if: failure()
-        uses: andymckay/cancel-action@0.2
 
-  integration-test:
-    name: API Integration Tests 
-    runs-on: ubuntu-latest
-    env:
-      DB_NAME: test
-      DB_USER: dev1
-      DB_PASS: pass1
-    steps:
-      - name: Checkout API Branch
-        uses: actions/checkout@v2
-        with:
-          ref: 'api'
-      - name: Setup PostgreSQL
-        run: |
-          sudo service postgresql start
-          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
-          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
-      - name: Run Unit Test
-        working-directory: ./api
-        run: 'mvn clean failsafe:integration-test'
-      - name: Cancel workflow on failure
-        if: failure()
-        uses: andymckay/cancel-action@0.2
+      # - name: Run Unit + Integration Tests
+      #   working-directory: ./api
+      #   run: 'mvn clean install'
 
-  merge-api:
-    name: Merge api -> dev
-    needs: [unit-test, integration-test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Merge api -> dev
-        uses: devmasx/merge-branch@master
+      - name: Create Pull Request to dev
+        id: create-pr
+        uses: repo-sync/pull-request@v2
         with:
-          type: now
-          from_branch: api
-          target_branch: dev
-          github_token: ${{ secrets.PAT }}
+          destination_branch: "dev"
+          pr_title: "PR: ${{ github.ref }} -> 'dev'"
+          pr_body: "👑 *An automated PR*"
+          pr_label: "automerge"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: FUCKING PULL REQUEST TO DEV
+      #   id: fucking-pr
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     base: dev
+      #     branch: api
+      #     labels: automerge
+
+      # - name: Check outputs
+      #   run: |
+      #     echo "Pull Request Number - ${{ steps.fucking-pr.outputs.pull-request-number }}"
+      #     echo "Pull Request URL - ${{ steps.fucking-pr.outputs.pull-request-url }}"
+      #     echo "Pull Request Operation - ${{ steps.fucking-pr.outputs.pull-request-operation }}"
+
+      - name: Enable Pull Request Automerge
+        uses: peter-evans/enable-pull-request-automerge@v1
+        with:
+          token: ${{ secrets.PAT }}
+          pull-request-number: ${{steps.fucking-pr.outputs.pr_number}}
+          
+
+
+# name: API
+# on:
+#   push:
+#     branches: [api]
+
+# jobs:
+
+#   unit-test:
+#     name: API Unit Tests 
+#     runs-on: ubuntu-latest
+#     env:
+#       DB_NAME: test
+#       DB_USER: dev1
+#       DB_PASS: pass1
+#     steps:
+#       - name: Checkout API Branch
+#         uses: actions/checkout@v2
+#         with:
+#           ref: 'api'
+#       - name: Setup PostgreSQL
+#         run: |
+#           sudo service postgresql start
+#           sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
+#           sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
+#           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+#       - name: Setup Java
+#         uses: actions/setup-java@v2
+#         with:
+#           distribution: 'adopt'
+#           java-version: '11'
+#           cache: 'maven'
+#       - name: Run Unit Test
+#         working-directory: ./api
+#         run: 'mvn clean install'
+#       - name: Cancel workflow on failure
+#         if: failure()
+#         uses: andymckay/cancel-action@0.2
+
+#   integration-test:
+#     name: API Integration Tests 
+#     runs-on: ubuntu-latest
+#     env:
+#       DB_NAME: test
+#       DB_USER: dev1
+#       DB_PASS: pass1
+#     steps:
+#       - name: Checkout API Branch
+#         uses: actions/checkout@v2
+#         with:
+#           ref: 'api'
+#       - name: Setup PostgreSQL
+#         run: |
+#           sudo service postgresql start
+#           sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
+#           sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
+#           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+#       - name: Setup Java
+#         uses: actions/setup-java@v2
+#         with:
+#           distribution: 'adopt'
+#           java-version: '11'
+#           cache: 'maven'
+#       - name: Run Unit Test
+#         working-directory: ./api
+#         run: 'mvn clean failsafe:integration-test'
+#       - name: Cancel workflow on failure
+#         if: failure()
+#         uses: andymckay/cancel-action@0.2
+
+#   merge-api:
+#     name: Merge api -> dev
+#     needs: [unit-test, integration-test]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - name: Merge api -> dev
+#         uses: devmasx/merge-branch@master
+#         with:
+#           type: now
+#           from_branch: api
+#           target_branch: dev
+#           github_token: ${{ secrets.PAT }}
