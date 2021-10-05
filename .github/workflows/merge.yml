@@ -1,0 +1,16 @@
+name: Automerge
+on:
+  check_suite:
+    types: [completed]
+  check_run:
+    types: [completed]
+
+jobs:
+  automerge:
+    name: Automerge PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.14.3"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

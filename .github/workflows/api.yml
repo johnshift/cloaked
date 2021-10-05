@@ -36,25 +36,14 @@ jobs:
       #   working-directory: ./api
       #   run: 'mvn clean install'
 
-  merge:
-    name: Merge API to dev
-    needs: [api]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Dev Branch
-        uses: actions/checkout@v2
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
         with:
-          ref: 'dev'
-
-      - name: Reset dev branch
-        run: |
-          git fetch origin api:api
-          git reset --hard api --
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          branch: i-dont-know-wtf
+          destination_branch: "dev"                      # If blank, default: master
+          pr_title: "Pulling ${{ github.ref }} into dev" # Title of pull request
+          pr_body: ":crown: *An automated PR*"              # Full markdown support, requires pr_title to be set
+          pr_label: "automerge"                               # Comma-separated list (no spaces)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
 # name: API
 # on:
