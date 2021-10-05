@@ -60,10 +60,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
 
+      - name: echo email
+        run: echo "email = ${{ secrets.EMAIL }}"
+
+      - name: config user.email
+        run: git config --global user.email ${{ secrets.EMAIL }}
+      - name: config user.user
+        run: git config --global user.user ${{ secrets.NAME }}
+
       - name: Merge
         run: |
-          git config --global user.email ${{ secrets.EMAIL }}
-          git config --global user.user ${{ secrets.NAME }}
           git checkout staging
           git merge dev --commit -m 'merge dev -> staging'
           git push origin staging
