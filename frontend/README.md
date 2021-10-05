@@ -4,7 +4,7 @@ This is a [React](https://reactjs.org) + [TypeScript](https://www.typescriptlang
 
 It also includes [Husky](https://typicode.github.io/husky) and a pre-commit hook that runs `npm run format`.
 
-## What's inside?
+## What's inside? 
 
 - [ReactJS](https://reactjs.org)
 - [Vite](https://vitejs.dev)
