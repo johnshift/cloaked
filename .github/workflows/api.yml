@@ -2,10 +2,11 @@ name: API
 on:
   push:
     branches: [api]
-
+    
 jobs:
-
+      
   api:
+    if: github.event_name == 'push'
     name: API Build + Tests 
     runs-on: ubuntu-latest
     env:
@@ -38,6 +39,7 @@ jobs:
 
       - name: pull-request
         uses: repo-sync/pull-request@v2
+        id: create-pr
         with:
           destination_branch: "dev"                      # If blank, default: master
           pr_title: "Pulling ${{ github.ref }} into dev" # Title of pull request
@@ -45,6 +47,16 @@ jobs:
           pr_label: "automerge"                               # Comma-separated list (no spaces)
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: echo pr_number
+        run: echo pr_number = ${{ steps.create-pr.outputs.pr_number }}
+
+      - name: persist pr number
+        uses: aaimio/set-persistent-value@v1
+        with:
+          key: pr_number
+          value: ${{ steps.create-pr.outputs.pr_number }}
+          access_token: ${{ secrets.PERSISTENT_VALUE_ACCESS_TOKEN }}
+      
 # name: API
 # on:
 #   push:
