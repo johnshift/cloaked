@@ -48,7 +48,14 @@ jobs:
           browser: chrome
           headless: true
 
-      - name: 'if success, create PR to staging'
+      - name: 'if success, merge to staging'
+        run: echo "..."
+
+
+      - name: 'create, PR to master'
+        run: echo "..."
+
+      - name: 'if accept, merge to master, then deploy'
         run: echo "..."
 
       - name: 'todo: deploy vercel + heroku'
