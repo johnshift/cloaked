@@ -61,8 +61,8 @@ jobs:
 
       - name: Manual merge using run
         run: |
-          git checkout dev
-          git merge api --rebase
+          git checkout api
+          git rebase dev
           git push origin dev
 
   # automerge:
