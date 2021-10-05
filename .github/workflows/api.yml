@@ -59,6 +59,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
+      - uses: fregante/setup-git-user@v1
 
       - name: Merge
         run: |
