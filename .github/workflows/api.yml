@@ -34,27 +34,44 @@ jobs:
           java-version: '11'
           cache: 'maven'
 
-      - name: Run Unit + Integration Tests
-        working-directory: ./api
-        run: 'mvn clean install'
+      # - name: Run Unit + Integration Tests
+      #   working-directory: ./api
+      #   run: 'mvn clean install'
 
-      - name: pull-request
-        uses: repo-sync/pull-request@v2
-        id: create-pr
-        with:
-          destination_branch: "dev"                      
-          pr_title: "Pulling ${{ github.ref }} into dev"
-          pr_body: ":crown: *An automated PR*"       
-          pr_label: "automerge"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: pull-request
+  #       uses: repo-sync/pull-request@v2
+  #       id: create-pr
+  #       with:
+  #         destination_branch: "dev"                      
+  #         pr_title: "Pulling ${{ github.ref }} into dev"
+  #         pr_body: ":crown: *An automated PR*"       
+  #         pr_label: "automerge"
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
 
   automerge:
-    name: Automerge PR 
+    name: Manual merge
     runs-on: ubuntu-latest
     needs: [api]
     steps:
-      - name: automerge
-        uses: "pascalgn/automerge-action@v0.14.3"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          PULL_REQUEST: ${{ needs.api.outputs.pr-number }} 
+      - name: Checkout API Branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'api'
+
+      - name: Manual merge using run
+        run: |
+          git checkout dev
+          git merge api --rebase
+          git push origin dev
+
+  # automerge:
+  #   name: Automerge PR 
+  #   runs-on: ubuntu-latest
+  #   needs: [api]
+  #   steps:
+  #     - name: automerge
+  #       uses: "pascalgn/automerge-action@v0.14.3"
+  #       env:
+  #         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  #         PULL_REQUEST: ${{ needs.api.outputs.pr-number }} 
