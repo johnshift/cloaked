@@ -27,12 +27,12 @@ jobs:
       #     sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
       #     sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
 
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
+      # - name: Setup Java
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'adopt'
+      #     java-version: '11'
+      #     cache: 'maven'
 
       # - name: Run Unit + Integration Tests
       #   working-directory: ./api

@@ -9,7 +9,11 @@ jobs:
   api-frontend-integration:
     name: API + Frontend Integration
     runs-on: ubuntu-latest
-    if: github.event.workflow_run == 'success'
     steps:
+
+      - name: echo somethign
+        run: echo ${{ github.event.workflow_run.conclusion }}
+
       - name: Echo on merged
-        run: 'MERGED!'
+        if: github.event.workflow_run.conclusion == 'success'
+        run: 'SUCCESS!'
