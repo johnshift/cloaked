@@ -12,47 +12,47 @@ concurrency:
 
 jobs:
 
-  api-frontend-integration:
-    name: API + Frontend Integration
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: 'dev'
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: 'maven'
-      - name: Build Api
-        working-directory: ./api
-        run: mvn clean install -DskipTests
-      - name: Setup Frontend
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: frontend/yarn.lock
-      - name: Install Yarn
-        run: npm install -g yarn
-      - name: Compile Frontend
-        working-directory: ./frontend
-        run: yarn install && yarn build
-      - name: Run End-to-End Tests
-        uses: cypress-io/github-action@v2
-        with:
-          start: yarn start
-          working-directory: ./frontend
-          wait-on: "http://localhost:5000"
-          wait-on-timeout: 30
-          browser: chrome
-          headless: true
+  # api-frontend-integration:
+  #   name: API + Frontend Integration
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         ref: 'dev'
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v2
+  #       with:
+  #         distribution: 'adopt'
+  #         java-version: '11'
+  #         cache: 'maven'
+  #     - name: Build Api
+  #       working-directory: ./api
+  #       run: mvn clean install -DskipTests
+  #     - name: Setup Frontend
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #         cache: 'npm'
+  #         cache-dependency-path: frontend/yarn.lock
+  #     - name: Install Yarn
+  #       run: npm install -g yarn
+  #     - name: Compile Frontend
+  #       working-directory: ./frontend
+  #       run: yarn install && yarn build
+  #     - name: Run End-to-End Tests
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         start: yarn start
+  #         working-directory: ./frontend
+  #         wait-on: "http://localhost:5000"
+  #         wait-on-timeout: 30
+  #         browser: chrome
+  #         headless: true
 
   merge-to-staging:
     name: Merge dev -> staging
     runs-on: ubuntu-latest
-    needs: [api-frontend-integration]
+    # needs: [api-frontend-integration]
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v2
