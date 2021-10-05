@@ -1,11 +1,22 @@
 name: Automerge
 on:
   pull_request:
-    branches: [dev, api]
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
   check_suite:
-    types: [completed]
-  # check_run:
-  #   types: [completed]
+    types:
+      - completed
+  status: {}
 
 jobs:
   automerge:
@@ -21,10 +32,10 @@ jobs:
           access_token: ${{ secrets.PERSISTENT_VALUE_ACCESS_TOKEN }}
 
       - name: echo pr_number
-        run: echo pr_number = ${{ steps.get-pr.outputs.pr_number }}
+        run: echo pr_number = ${{ steps.get-pr.outputs.value }}
 
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.3"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          PULL_REQUEST:
+          PULL_REQUEST: ${{ steps.get-pr.outputs.value }}

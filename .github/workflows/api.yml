@@ -19,12 +19,12 @@ jobs:
         with:
           ref: 'api'
 
-      - name: Setup PostgreSQL
-        run: |
-          sudo service postgresql start
-          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
-          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
+      # - name: Setup PostgreSQL
+      #   run: |
+      #     sudo service postgresql start
+      #     sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_NAME }}"
+      #     sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH ENCRYPTED PASSWORD '${{ env.DB_PASS }}'"
+      #     sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_NAME }} TO ${{ env.DB_USER }}"          
 
       - name: Setup Java
         uses: actions/setup-java@v2
