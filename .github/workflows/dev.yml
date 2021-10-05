@@ -2,7 +2,7 @@ name: Dev
 
 on:
   workflow_run:
-    workflows: [API]
+    workflows: ["API"]
     types: [completed]
 
 jobs:
@@ -11,9 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: echo somethign
-        run: echo ${{ github.event.workflow_run.conclusion }}
-
       - name: Echo on merged
-        if: github.event.workflow_run.conclusion == 'success'
         run: 'SUCCESS!'
