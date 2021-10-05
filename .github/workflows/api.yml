@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [api]
     steps:
-      - name: Checkout API Branch
+      - name: Checkout Branch
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
