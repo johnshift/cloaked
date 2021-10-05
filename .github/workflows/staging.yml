@@ -10,6 +10,10 @@ jobs:
     name: Merge dev -> staging
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'staging'
+          
       - name: "TODO: Deploy"
         run: echo "deploy to vercel, heroku"
 
