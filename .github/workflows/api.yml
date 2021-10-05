@@ -57,7 +57,7 @@ jobs:
       - name: Checkout API Branch
         uses: actions/checkout@v2
         with:
-          ref: 'api'
+          fetch-depth: 0
 
       - name: Manual merge using run
         run: |
