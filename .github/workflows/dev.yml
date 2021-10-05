@@ -61,14 +61,6 @@ jobs:
           token: ${{ secrets.PAT }}
       - uses: fregante/setup-git-user@v1
 
-      - name: echo email
-        run: echo "email = ${{ secrets.EMAIL }}"
-
-      - name: config user.email
-        run: git config --global user.email ${{ secrets.EMAIL }}
-      - name: config user.user
-        run: git config --global user.user ${{ secrets.NAME }}
-
       - name: Merge
         run: |
           git checkout staging
