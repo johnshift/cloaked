@@ -6,7 +6,6 @@ on:
 jobs:
       
   api:
-    if: github.event_name == 'push'
     name: API Build + Tests 
     runs-on: ubuntu-latest
     env:
@@ -50,12 +49,20 @@ jobs:
       - name: echo pr_number
         run: echo pr_number = ${{ steps.create-pr.outputs.pr_number }}
 
-      - name: persist pr number
-        uses: aaimio/set-persistent-value@v1
-        with:
-          key: pr_number
-          value: ${{ steps.create-pr.outputs.pr_number }}
-          access_token: ${{ secrets.PERSISTENT_VALUE_ACCESS_TOKEN }}
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.14.3"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          PULL_REQUEST: ${{ steps.create-pr.outputs.pr_number }}
+
+      # - name: persist pr number
+      #   uses: aaimio/set-persistent-value@v1
+      #   with:
+      #     key: pr_number
+      #     value: ${{ steps.create-pr.outputs.pr_number }}
+      #     access_token: ${{ secrets.PERSISTENT_VALUE_ACCESS_TOKEN }}
+
+
       
 # name: API
 # on:
